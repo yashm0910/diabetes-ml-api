@@ -7,6 +7,7 @@ from sqlalchemy.orm import session
 import schemas
 from sqlalchemy.orm import Session,Query
 import joblib
+from typing import List
 
 model=joblib.load("diabetes_model.pkl")
 scaler = joblib.load("diabetes_scaler.pkl")
@@ -46,9 +47,9 @@ def create(request:schemas.DiabetesSchema ,db:session=Depends(get_db)):
     
     return new_patient
 
-@app.get("/patient")
-def get(db:session=Depends(get_db)):
-    patients=db.query(models.DiabetesModel).order_by(models.DiabetesModel).all()
+@app.get("/patients", response_model=List[schemas.DiabetesSchema])
+def get_all_patients(db: Session = Depends(get_db)):
+    patients = db.query(models.DiabetesModel).all()
     return patients
 
 @app.patch("/patients/{id}")
@@ -79,11 +80,16 @@ def delete_patient(id:int,db:session=Depends(get_db)):
 
 @app.get("/patient/getbp/{id}",status_code=status.HTTP_200_OK,response_model=schemas.Showbp)
 def get_patient_bp(id:int,db:session=Depends(get_db)):
-    patients=(db.query(models.DiabetesModel)
-              .order_by(models.DiabetesModel.id==id)
-              .first()
+    patient = (
+        db.query(models.DiabetesModel)
+        .filter(models.DiabetesModel.id == id)
+        .first()
     )
-    return patients
+
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+    
+    return patient
 
 @app.post("/predict/{patient_id}",response_model=schemas.PredictionResponse)
 def predict(patient_id:int,db: session = Depends(get_db)):

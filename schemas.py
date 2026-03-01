@@ -2,6 +2,7 @@ from pydantic import BaseModel,Field
 from typing import Optional
 
 class DiabetesSchema(BaseModel):
+    id: int=Field()
     Pregnancies: int=Field(ge=0,lt=20)
     Glucose: int=Field(ge=0,lt=300)
     BMI: float=Field(ge=10,lt=70)
