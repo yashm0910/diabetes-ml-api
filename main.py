@@ -128,3 +128,7 @@ def predict(patient_id:int,db: session = Depends(get_db)):
         "patient_id": patient_id,
         "prediction": prediction_value
     }
+
+@app.get("/health-api")
+def health():
+    return {"status": "running"}
