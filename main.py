@@ -30,7 +30,7 @@ def get_db():
         db.close()
 
 @app.post("/add_patient")
-def create(request:schemas.DiabetesSchema ,db:session=Depends(get_db)):
+def create(request:schemas.DiabetesCreate ,db:session=Depends(get_db)):
     new_patient=models.DiabetesModel(
         BMI=request.BMI,
         BloodPressure=request.BloodPressure,

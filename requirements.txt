@@ -7,3 +7,5 @@ typing
 joblib
 scikit-learn
 python-dotenv
+streamlit
+requests
